@@ -1,5 +1,6 @@
 <?php
 require_once('TwitterAPIExchange.php');
+
 /** Set access tokens here - see: https://dev.twitter.com/apps/ **/
 $settings = array(
   'oauth_access_token' => "YOUR_OAUTH_ACCESS_TOKEN",
@@ -27,13 +28,17 @@ if (isset($_GET['count']) && is_numeric($_GET['count'])) {
 $getfield = "?screen_name=$user&count=$count";
 $twitter = new TwitterAPIExchange($settings);
 $data = json_decode($twitter->setGetfield($getfield)
-->buildOauth($url, $requestMethod)
-->performRequest(),$assoc = TRUE);
+        ->buildOauth($url, $requestMethod)
+        ->performRequest(),$assoc = TRUE);
 
-if(array_key_exists("errors", $data)) {echo "<h3>Sorry, there was a problem.</h3><p>Twitter returned the following error message:</p><p><em>".$data[errors][0]["message"]."</em></p>";exit();}
+if(array_key_exists("errors", $data)) {
+  echo "<h3>Sorry, there was a problem.</h3><p>Twitter returned the following error message:</p><p><em>".$data[errors][0]["message"]."</em></p>";
+  exit();
+}
+
 $followers_count = $data[0]['user']['followers_count'];
 
-echo "<h3>Twitter - ". $followers_count ." </h3>";
+echo "<h3>Twitter - ". $followers_count ." followers</h3>";
 
 foreach($data as $item)
 {
@@ -41,7 +46,7 @@ foreach($data as $item)
   array_pop($text);
   $text = implode('/', $text);
   $url = $item['entities']['urls'][0]['expanded_url'];
-  $link = "<a href='$url' target='_blank'>Read more</url>";
+  $link = "<a href='$url' target='_blank'>Read more</a></url>";
 
   echo "Time and Date of Tweet: ".$item['created_at']."<br />";
   echo "Tweet: ". $text . $link ."<br />";
